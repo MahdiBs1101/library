@@ -44,6 +44,22 @@ public class FileManager {
         return bookList;
     }
 
-    
+    public static void saveBooksToCSV(List<Book> books) throws IOException {
+        try(BufferedWriter writer =
+                    new BufferedWriter(new FileWriter(BOOK_LIST_CSV))) {
+            writer.write("Title,Author,Publisher,Publication Year,Path");
+            writer.newLine();
+            for(Book holder : books) {
+                String line = holder.getTitle() + ","
+                        + holder.getAuthor() + ","
+                        + holder.getPublisher() + ","
+                        + holder.getId() + ","
+                        + holder.getTextFilePath();
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
+
 
 }
