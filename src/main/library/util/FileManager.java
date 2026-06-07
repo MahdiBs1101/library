@@ -29,12 +29,12 @@ public class FileManager {
 
                 try {
                     String title = bookInf[0].trim();
-                    String publisher = bookInf[4].trim();
                     String author = bookInf[1].trim();
-                    String genre = bookInf[2].trim();
+                    String publisher = bookInf[2].trim();
                     int year = Integer.parseInt(bookInf[3].trim());
+                    String Path = bookInf[4].trim();
 
-                    Book holder = new Book(title, publisher, author, genre, year);
+                    Book holder = new Book(title, Path, author, publisher, year);
                     bookList.add(holder);
                 } catch (NumberFormatException e) {
                     System.out.println("Error converting year to number: " + bookInf[3]);
@@ -43,5 +43,7 @@ public class FileManager {
         }
         return bookList;
     }
+
+    
 
 }
