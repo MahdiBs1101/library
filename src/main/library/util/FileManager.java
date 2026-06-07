@@ -13,32 +13,35 @@ public class FileManager {
 
     public static List<Book> loadBooksFromCSV() throws IOException {
         ArrayList<Book> bookList = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(BOOK_LIST_CSV));
-        String line;
-        line = reader.readLine();
 
-        while ((line = reader.readLine()) != null) {
-            String[] bookInf = line.split(",");
+        try(BufferedReader reader =
+                    new BufferedReader(new FileReader(BOOK_LIST_CSV))) {
+            String line;
+            line = reader.readLine();
 
-            if (bookInf.length < 5) {
-                System.out.println("Invalid line in CSV: " + line);
-                continue;
-            }
+            while ((line = reader.readLine()) != null) {
+                String[] bookInf = line.split(",");
 
-            try {
-                String title = bookInf[0].trim();
-                String publisher = bookInf[4].trim();
-                String author = bookInf[1].trim();
-                String genre = bookInf[2].trim();
-                int year = Integer.parseInt(bookInf[3].trim());
+                if (bookInf.length < 5) {
+                    System.out.println("Invalid line in CSV: " + line);
+                    continue;
+                }
 
-                Book holder = new Book(title, publisher, author, genre, year);
-                bookList.add(holder);
-            } catch (NumberFormatException e) {
-                System.out.println("Error converting year to number: " + bookInf[3]);
+                try {
+                    String title = bookInf[0].trim();
+                    String publisher = bookInf[4].trim();
+                    String author = bookInf[1].trim();
+                    String genre = bookInf[2].trim();
+                    int year = Integer.parseInt(bookInf[3].trim());
+
+                    Book holder = new Book(title, publisher, author, genre, year);
+                    bookList.add(holder);
+                } catch (NumberFormatException e) {
+                    System.out.println("Error converting year to number: " + bookInf[3]);
+                }
             }
         }
-        reader.close();
         return bookList;
     }
+
 }
