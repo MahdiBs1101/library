@@ -61,5 +61,47 @@ public class FileManager {
         }
     }
 
+        public static List<String> readBookPages(String filePath, int linesPerPage) throws IOException {
+            if (linesPerPage <= 0) {
+                throw new IllegalArgumentException("linesPerPage must be positive");
+            }
 
+            ArrayList<String> pagesOfBook = new ArrayList<>();
+
+            try(BufferedReader reader =
+                        new BufferedReader(new FileReader(filePath))) {
+                boolean isFinished = false;
+
+                while(true) {
+                    StringBuilder page = new StringBuilder();
+                    for (int i = 0; i < linesPerPage; i++) {
+                        String line = reader.readLine();
+
+                        if (line == null) {
+                            isFinished = true;
+                            break;
+                        }
+
+                        page.append(line).append("\n");
+                    }
+
+                    if (!page.isEmpty()) pagesOfBook.add(page.toString());
+                    if (isFinished) break;
+                }
+            }
+            return pagesOfBook;
+        }
+
+
+    public static int countLines(String filePath) throws IOException {
+        int lines = 0;
+        try(BufferedReader reader =
+                new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while((line = reader.readLine()) != null) {
+                lines++;
+            }
+        }
+        return lines;
+    }
 }
