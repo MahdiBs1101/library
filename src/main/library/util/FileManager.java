@@ -1,22 +1,22 @@
 package main.library.util;
 
-import main.library.model.Book;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import main.library.model.Book;
 
+
+/**
+ * FileManager handles reading and writing book data and text content.
+ * Provides utilities to load/save books from CSV, read/write book text,
+ * split text into pages, and count lines.
+ */
 public class FileManager {
-    static final String BOOKS_TEXT_DIR = "data/books_text";
-    static final String BOOK_LIST_CSV = "data/Book_List_text/Book_List.txt";
+    private static final String BOOKS_TEXT_DIR = "data/books_text";
+    private static final String BOOK_LIST_CSV = "data/Book_List_text/Book_List.txt";
 
 
-    /**
-     * Loads all books from the CSV file and returns them as a list of Book objects.
-     *
-     * @return list of books loaded from the CSV file
-     * @throws IOException if the CSV file cannot be read
-     */
+    // Loads all books from the CSV file and returns them as a list of Book objects.
     public static List<Book> loadBooksFromCSV() throws IOException {
         ArrayList<Book> bookList = new ArrayList<>();
 
@@ -51,13 +51,7 @@ public class FileManager {
     }
 
 
-    /**
-     * Saves the given list of books to the CSV file.
-     * This method overwrites the existing file content.
-     *
-     * @param books list of books to save
-     * @throws IOException if the CSV file cannot be written
-     */
+    // Saves the given list of books to the CSV file.
     public static void saveBooksToCSV(List<Book> books) throws IOException {
         try(BufferedWriter writer =
                     new BufferedWriter(new FileWriter(BOOK_LIST_CSV))) {
@@ -76,16 +70,7 @@ public class FileManager {
     }
 
 
-    /**
-     * Reads a text file and splits its content into pages.
-     * Each page contains at most the given number of lines.
-     *
-     * @param filePath path of the book text file
-     * @param linesPerPage number of lines in each page
-     * @return list of pages as strings
-     * @throws IOException if the file cannot be read
-     * @throws IllegalArgumentException if linesPerPage is zero or negative
-     */
+    // Reads a text file and splits its content into pages.
     public static List<String> readBookPages(String filePath, int linesPerPage) throws IOException {
         if (linesPerPage <= 0) {
             throw new IllegalArgumentException("linesPerPage must be positive");
@@ -118,13 +103,7 @@ public class FileManager {
     }
 
 
-    /**
-     * Counts the number of lines in the given text file.
-     *
-     * @param filePath path of the file
-     * @return number of lines in the file
-     * @throws IOException if the file cannot be read
-     */
+    // Counts the number of lines in the given text file.
     public static int countLines(String filePath) throws IOException {
         int lines = 0;
         try(BufferedReader reader =
@@ -138,14 +117,8 @@ public class FileManager {
     }
 
 
-    /**
-     * Writes the given text content to a file.
-     * This method overwrites the existing file content.
-     *
-     * @param filePath path of the file
-     * @param content text content to write
-     * @throws IOException if the file cannot be written
-     */
+
+    // Writes the given text content to a file.
     public static void writeBookText(String filePath, String content) throws IOException {
         try(BufferedWriter writer =
                     new BufferedWriter(new FileWriter(filePath))) {
@@ -158,13 +131,8 @@ public class FileManager {
     }
 
 
-    /**
-     * Reads the full text content of a file and returns it as a string.
-     *
-     * @param filePath path of the file
-     * @return full text content of the file
-     * @throws IOException if the file cannot be read
-     */
+
+    // Reads the full text content of a file and returns it as a string.
     public static String readFullText(String filePath) throws IOException {
         try(BufferedReader reader =
                     new BufferedReader(new FileReader(filePath))) {
