@@ -1,88 +1,148 @@
 package main.library.service;
 
-import main.library.model.Book;
-
 import java.io.IOException ;
-
 import java.util.* ;
-
+import main.library.model.Book;
 import main.library.util.FileManager ;
 
+/**
+ * LibraryService is the main service class that handles operations on books.
+ * It provides methods to read, write, edit, and retrieve book data.
+ */
 public class LibraryService {
+    private List<Book> books;
 
-    private List<Book> books ;
 
-    public LibraryService() throws IOException {
-
-        books = FileManager.loadBooksFromCSV() ;
-        FileManager.saveBooksToCSV(books) ;
+    public LibraryService() {
+        try {
+            books = FileManager.loadBooksFromCSV();
+            FileManager.saveBooksToCSV(books);
+        } catch (IOException e) {
+            System.out.println("Error loading or saving books: " + e.getMessage());
+            books = new ArrayList<>();
+        }
     }
 
-    public List<Book> getAllBooks(){
-        return new ArrayList<>(books) ;
+
+    // Returns a copy of all books.
+    public List<Book> getAllBooks() {
+        return new ArrayList<>(books);
     }
 
-    public Optional<Book> findBookById(int id){
 
+    // Finds a book by its ID.
+    public Optional<Book> findBookById(int id) {
+        Optional<Book> selectedBook = Optional.empty();
 
-        Optional <Book> selectedBook = Optional.empty() ;
-        
-        for(Book b : books){
-
-            if(b.getId()==id){
+        for (Book b : books) {
+            if (b.getId() == id) {
                 selectedBook = Optional.of(b);
-                break ;
-
+                break;
             }
         }
-        return selectedBook ;
+
+        return selectedBook;
     }
 
-    public void saveBooks() throws IOException {
 
-        FileManager.saveBooksToCSV(books) ;
+    // Saves the current list of books to the CSV file.
+    public void saveBooks() {
+        try {
+            FileManager.saveBooksToCSV(books);
+        } catch (IOException e) {
+            System.out.println("Error saving books: " + e.getMessage());
+        }
     }
 
-    public boolean editBookMetaData(int bookId,String newTitle,String newAuthor,String newPublisher, Integer newYear){
 
-        Book selectedBook = findBookById(bookId).get() ;
+    // Edits the metadata (title, author, publisher, year) of a book.
+    public boolean editBookMetaData(int bookId, String newTitle, String newAuthor,
+                                    String newPublisher, Integer newYear) {
+        Optional<Book> result = findBookById(bookId);
+        if (result.isEmpty()) return false;
 
-        if(selectedBook==null) return false ;
+        Book selectedBook = result.get();
 
-        if(selectedBook.getTitle() != null) selectedBook.setTitle(newTitle) ;
+        if (newTitle != null && !newTitle.trim().isEmpty()) {
+            selectedBook.setTitle(newTitle.trim());
+        }
+        if (newAuthor != null && !newAuthor.trim().isEmpty()) {
+            selectedBook.setAuthor(newAuthor.trim());
+        }
+        if (newPublisher != null && !newPublisher.trim().isEmpty()) {
+            selectedBook.setPublisher(newPublisher.trim());
+        }
+        if (newYear != null && newYear > 0) {
+            selectedBook.setPublicationYear(newYear);
+        }
 
-        if(selectedBook.getAuthor() != null) selectedBook.setAuthor(newAuthor) ;
+        saveBooks();
 
-        if(selectedBook.getPublisher() != null) selectedBook.setPublisher(newPublisher);
-
-        if(selectedBook.getPublicationYear() != 0) selectedBook.setPublicationYear(newYear) ; ;
-
-        return true ;
+        return true;
     }
 
-    public List<String> getBookPages(Book book,int linesPerPage) throws IOException {
 
-        return FileManager.readBookPages(book.getTextFilePath(),linesPerPage) ;
+    // Retrieves book pages based on the given lines per page.
+    public List<String> getBookPages(Book book, int linesPerPage) {
+        if (book == null) return new ArrayList<>();
+
+        try {
+            return FileManager.readBookPages(book.getTextFilePath(), linesPerPage);
+        } catch (IOException e) {
+            System.out.println("Error loading book: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+        return new ArrayList<>();
     }
 
-    public String readFullText(int bookId) throws IOException {
 
-        Book selectedBook = findBookById(bookId).get() ;
-         return FileManager.readFullText(selectedBook.getTextFilePath()) ;
+    // Reads the full text of a book.
+    public String readFullText(int bookId) {
+        Optional<Book> result = findBookById(bookId);
+        if (result.isEmpty()) return "";
+
+        Book selectedBook = result.get();
+
+        try {
+            return FileManager.readFullText(selectedBook.getTextFilePath());
+        } catch (IOException e) {
+            System.out.println("Error loading book: " + e.getMessage());
+        }
+        return "";
     }
 
-    public boolean editBookContent(int bookId, String newContent) throws IOException {
 
-        Book selectedBook = findBookById(bookId).get() ;
-        if(selectedBook==null) return false ;
+    // Edits the full content of a book.
+    public boolean editBookContent(int bookId, String newContent) {
+        if (newContent == null) return false;
 
-        FileManager.writeBookText(selectedBook.getTextFilePath(),newContent) ;
-        return true ;
+        Optional<Book> result = findBookById(bookId);
+        if (result.isEmpty()) return false;
+
+        Book selectedBook = result.get();
+
+        try {
+            FileManager.writeBookText(selectedBook.getTextFilePath(), newContent);
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error saving book content: " + e.getMessage());
+        }
+
+        return false;
     }
 
-    public int countLines(Book book) throws IOException {
 
-        return FileManager.countLines(book.getTextFilePath()) ;
+
+    // Counts the number of lines in a book's text file.
+    public int countLines(Book book) {
+        if (book == null) return 0;
+
+        try {
+            return FileManager.countLines(book.getTextFilePath());
+        } catch (IOException e) {
+            System.out.println("Error loading book: " + e.getMessage());
+        }
+        return 0;
     }
-
 }
