@@ -47,5 +47,52 @@ public class MainFrame extends JFrame {
         setVisible(true) ;
     }
 
+    public void createBooksPanel() {
 
+        booksPanel.removeAll() ;
+        booksPanel.setLayout(new GridLayout(0,1)) ;
+
+        List<Book> books = service.getAllBooks();
+
+
+        for (Book b : books) {
+
+            JButton bookButton = new JButton(b.getTitle());
+
+            bookButton.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            selectedBook = b;
+
+                            try {
+                                showMenuBook();
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
+
+                        }
+                    }
+            );
+
+            booksPanel.add(bookButton) ;
+        }
+
+        JButton refresh = new JButton("Refresh");
+
+        refresh.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        booksPanel.removeAll() ;
+                        createBooksPanel() ;
+                        booksPanel.revalidate() ;
+                        booksPanel.repaint() ;
+                    }
+                }
+        );
+
+        booksPanel.add(refresh) ;
+    }
 }
