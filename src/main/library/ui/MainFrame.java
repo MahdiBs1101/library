@@ -95,4 +95,109 @@ public class MainFrame extends JFrame {
 
         booksPanel.add(refresh) ;
     }
+
+    public void showMenuBook() throws IOException {
+
+        menuPanel.removeAll() ;
+        menuPanel.setLayout(new GridLayout(0,1)) ;
+
+        titleField = new JTextField(selectedBook.getTitle()) ;
+        authorField = new JTextField(selectedBook.getAuthor()) ;
+        publisherField = new JTextField(selectedBook.getPublisher()) ;
+        yearField = new JTextField(Integer.toString(selectedBook.getPublicationYear())) ;
+
+        JLabel countLine = new JLabel("Lines count :" + service.countLines(selectedBook)) ;
+
+        JButton saveData = new JButton("Save Metadata") ;
+
+        saveData.addActionListener(
+
+                new ActionListener() {
+
+                    @Override
+                    public void actionPerformed (ActionEvent e) {
+
+                        try {
+
+                            String title = titleField.getText();
+                            String author = authorField.getText();
+                            String publisher = publisherField.getText();
+                            int year = Integer.parseInt(yearField.getText());
+
+                            boolean result = service.editBookMetaData(selectedBook.getId(), title, author, publisher, year) ;
+
+                            if (result) JOptionPane.showMessageDialog(MainFrame.this, "Saved Successfully") ;
+
+                            else JOptionPane.showMessageDialog(MainFrame.this, "Error") ;
+
+                        }
+                        catch (NumberFormatException ee) {
+                            JOptionPane.showMessageDialog(MainFrame.this,"Invalid year") ;
+                        }
+                    }
+
+
+
+                }
+
+        );
+
+        JButton readBook = new JButton("Read Book") ;
+
+        readBook.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        openBook(false);
+                    }
+                }
+        );
+
+        JButton editBook = new JButton("Edit Book") ;
+
+        editBook.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        openBook(true) ;
+                    }
+                }
+        );
+
+        JButton back = new JButton("Back") ;
+
+        back.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        getContentPane().removeAll() ;
+                        createBooksPanel() ;
+                        add(booksPanel) ;
+                        revalidate() ;
+                        repaint() ;
+                    }
+                }
+        );
+
+        menuPanel.add(titleField);
+        menuPanel.add(authorField);
+        menuPanel.add(publisherField);
+        menuPanel.add(yearField);
+        menuPanel.add(countLine);
+
+        menuPanel.add(saveData);
+        menuPanel.add(readBook);
+        menuPanel.add(editBook);
+        menuPanel.add(back);
+
+        getContentPane().removeAll();
+
+        add(menuPanel);
+
+        revalidate();
+        repaint();
+    }
 }
