@@ -12,7 +12,7 @@ import main.library.model.Book;
  * split text into pages, and count lines.
  */
 public class FileManager {
-    private static final String BOOKS_TEXT_DIR = "data/books_text";
+    private static final String BOOKS_TEXT_DIR = "data/books_text/";
     private static final String BOOK_LIST_CSV = "data/Book_List_text/Book_List.txt";
 
 
@@ -38,7 +38,7 @@ public class FileManager {
                     String author = bookInf[1].trim();
                     String publisher = bookInf[2].trim();
                     int year = Integer.parseInt(bookInf[3].trim());
-                    String path = bookInf[4].trim();
+                    String path = BOOKS_TEXT_DIR + bookInf[4].trim();
 
                     Book holder = new Book(title, path, author, publisher, year);
                     bookList.add(holder);
@@ -62,7 +62,7 @@ public class FileManager {
                         + holder.getAuthor() + ","
                         + holder.getPublisher() + ","
                         + holder.getPublicationYear() + ","
-                        + holder.getTextFilePath();
+                        + holder.getTextFilePath().substring(BOOKS_TEXT_DIR.length()  + 1);
                 writer.write(line);
                 writer.newLine();
             }
