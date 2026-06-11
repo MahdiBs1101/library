@@ -200,4 +200,126 @@ public class MainFrame extends JFrame {
         revalidate();
         repaint();
     }
+
+    public void openBook(boolean editable){
+
+        readerPanel.removeAll() ;
+        readerPanel.setLayout(new BorderLayout()) ;
+
+        pageArea.setEditable(editable) ;
+
+        pages = service.getBookPages(selectedBook,3) ;
+
+        currentPage = 0 ;
+
+        pageArea.setLineWrap(true) ;
+        pageArea.setWrapStyleWord(true) ;
+
+        if(!pages.isEmpty()){
+            pageArea.setText(pages.get(0)) ;
+        }
+
+        pageInfoLabel.setText("Page " + (currentPage + 1) + " / " + pages.size());
+
+        JButton previousPage = new JButton("<") ;
+
+        previousPage.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        pages.set(currentPage,pageArea.getText()) ;
+
+                        if(currentPage>0){
+                            --currentPage;
+                            pageArea.setText(pages.get(currentPage));
+
+                            pageInfoLabel.setText("Page " + (currentPage + 1) + " / " + pages.size()) ;
+                        }
+                    }
+                }
+        );
+
+        JButton nextPage = new JButton(">") ;
+
+        nextPage.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        pages.set(currentPage,pageArea.getText()) ;
+
+                        if(currentPage < pages.size()-1){
+                            ++currentPage;
+                            pageArea.setText(pages.get(currentPage));
+
+                            pageInfoLabel.setText("Page " + (currentPage + 1) + " / " + pages.size()) ;
+                        }
+                    }
+                }
+        );
+
+        JPanel buttonPanel = new JPanel() ;
+
+        buttonPanel.add(previousPage) ;
+        buttonPanel.add(pageInfoLabel) ;
+        buttonPanel.add(nextPage) ;
+
+        if(editable){
+
+            JButton apply = new JButton("Apply") ;
+
+            apply.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+
+                            pages.set(currentPage,pageArea.getText()) ;
+
+                            String content = "" ;
+
+                            for(String page : pages){
+                                content += page ;
+
+                            }
+
+                            boolean result = service.editBookContent(selectedBook.getId(),content) ;
+
+                            if(result){
+                                JOptionPane.showMessageDialog(MainFrame.this,"Saved successfully") ;
+                            }
+                            else{
+                                JOptionPane.showMessageDialog(MainFrame.this,"Error saving") ;
+                            }
+                        }
+                    }
+            );
+
+            buttonPanel.add(apply) ;
+        }
+
+        JButton back = new JButton("Back") ;
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    showMenuBook() ;
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        buttonPanel.add(back) ;
+
+        readerPanel.add(new JScrollPane(pageArea),BorderLayout.CENTER) ;
+        readerPanel.add(buttonPanel,BorderLayout.SOUTH) ;
+
+        getContentPane().removeAll() ;
+        add(readerPanel) ;
+
+        revalidate() ;
+        repaint() ;
+    }
+
 }
