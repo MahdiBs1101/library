@@ -62,7 +62,7 @@ public class FileManager {
                         + holder.getAuthor() + ","
                         + holder.getPublisher() + ","
                         + holder.getPublicationYear() + ","
-                        + holder.getTextFilePath().substring(BOOKS_TEXT_DIR.length()  + 1);
+                        + holder.getTextFilePath().substring(BOOKS_TEXT_DIR.length() );
                 writer.write(line);
                 writer.newLine();
             }
